@@ -1,6 +1,8 @@
 import json
 from nltk.tokenize import word_tokenize
 import re
+import operator
+from collections import Counter
 
 
 # tokenize the tweet
@@ -38,8 +40,24 @@ def preprocess(s, lowercase=False):
 
 
 # check tweet
+
 with open('ada.json', 'r') as f:
     line = f.readline()  # read first line
     tweet = json.loads(line) #load line as a dict
     tokens = preprocess(tweet['text'])
     print(tokens)
+
+f.close()
+
+with open('ada.json', 'r') as f:
+    count_all = Counter()
+    tweets = [json.load(line) for line in f.readlines()]
+    terms_all = [ preprocess(tweet['text']) for tweet in tweets]
+    count_all.update(terms_all)
+    print(count_all.most_common(5))
+
+    """ tweet = json.loads(line) #load line as a dict
+    terms_all = [term for term in preprocess(tweet['text'])]
+    count_all.update(terms_all)
+    
+     """
