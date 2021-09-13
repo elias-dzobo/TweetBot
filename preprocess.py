@@ -3,7 +3,10 @@ from nltk.tokenize import word_tokenize
 import re
 import operator
 from collections import Counter
-
+from nltk.corpus import stopwords
+import string
+from nltk import bigrams 
+import vincent
 
 # tokenize the tweet
 emoticons_str = r"""
@@ -38,26 +41,35 @@ def preprocess(s, lowercase=False):
         tokens = [token if emoticon_re.search(token) else token.lower() for token in tokens]
     return tokens
 
-
-# check tweet
-
-with open('ada.json', 'r') as f:
-    line = f.readline()  # read first line
-    tweet = json.loads(line) #load line as a dict
-    tokens = preprocess(tweet['text'])
-    print(tokens)
-
-f.close()
+preprocessed_tweets = []
 
 with open('ada.json', 'r') as f:
+    for line in f:
+        tweet = json.loads(line)
+        tokens = preprocess(tweet['text'])
+        preprocessed_tweets.append(tokens)
+
+
+#removing stopwords
+punctuation = list(string.punctuation)
+stop = stopwords.words('english') + punctuation + ['rt', 'via', 'RT', '…']
+
+# counting term frequencies 
+fname = 'ada.json'
+with open(fname, 'r') as f:
     count_all = Counter()
-    tweets = [json.load(line) for line in f.readlines()]
-    terms_all = [ preprocess(tweet['text']) for tweet in tweets]
-    count_all.update(terms_all)
+    for line in f:
+        tweet = json.loads(line)
+        # Create a list with all the terms
+        terms_stop = [term for term in preprocess(tweet['text']) if term not in stop and len(term) > 2]
+        terms_only = [term for term in preprocess(tweet['text']) 
+              if term not in stop and
+              not term.startswith(('#', '@'))]
+        # Update the counter
+        term_bigrams = bigrams(terms_stop)
+        count_all.update(term_bigrams)
+    # Print the first 5 most frequent words
     print(count_all.most_common(5))
 
-    """ tweet = json.loads(line) #load line as a dict
-    terms_all = [term for term in preprocess(tweet['text'])]
-    count_all.update(terms_all)
-    
-     """
+preprocessed_tweets = [term for term in preprocessed_tweets if term not in stop and len(term) > 2]
+print(preprocessed_tweets)

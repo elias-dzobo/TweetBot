@@ -4,7 +4,10 @@ from tweepy import Stream
 from tweepy.streaming import StreamListener
 import time
 
-
+consumer_key = 'IjnmXY2vpjAJJek8dWM51YiHF'
+consumer_secret = 'NP5985N98dy7AWqI0elUAnpHgRzKj9sGVki8qjnFnIqrlCUCx8'
+access_token  = '948717579224473600-bRNh6cINiDp4sKIRX8Dip4LCJJF42di'
+access_secret = 'P7JY1PIvEjYVB9fXSSYyP0HCkiWU37B7k91Ciz0f8nXZq'
 
 start_time = time.time()
 keyword_list = ['$btc', '$ada', '$matic', '$eth']
